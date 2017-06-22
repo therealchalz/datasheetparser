@@ -27,8 +27,11 @@ Reset value: 0x00
 <register info>
 Bits 31:29 Reserved,
 blah blah blah...
+40.8.2  Control register 2 (USART_CR2)
+.........
+blah blah blah, to the end of the last bit of the last register
 "
-40.8.2.........
+
 
 Copy that to the clipboard and then run the software.  It will:
 - Read the text from the clipboard
@@ -37,7 +40,7 @@ Copy that to the clipboard and then run the software.  It will:
 
 Then you:
 - Paste it into your code
-- Select the next section
+- Select the next section you're interested in
 - Rinse and repeat
 '''
 
@@ -54,7 +57,7 @@ import pyperclip
 sectionSeparatorRE = r'^\d+\.\d+\.\d+'
 
 scriptName = 'dsparse'
-scriptVer = 'v1.0'
+scriptVer = 'v1.1'
 
 #infilename = "/tmp/cr1b.txt"
 
@@ -74,6 +77,7 @@ def output(text=''):
 
 def processSection(lines):
   linesDone = 0
+  registerNames = list()
   
   if len(lines) < 5:
     print("ERROR: Are you sure you copied the text?")
@@ -114,7 +118,7 @@ def processSection(lines):
       isRange = False
       if line.startswith('Bits'):
         isRange = True
-        name = tokens[2].split('[')[0].strip(',').strip(':')
+        name = re.search(r'\w+', tokens[2]).group(0)
         if 'Reserved' in name:
           continue
         nameBits = re.search(r'\w+\[(\d+):(\d+)\]', tokens[2])
@@ -124,7 +128,7 @@ def processSection(lines):
         rangeMask = '0x{:X}'.format((2 ** rangeLength) - 1)
       else:
         bit = tokens[1]
-        name = tokens[2].strip(',').strip(':')
+        name = re.search(r'\w+', tokens[2]).group(0)
 
       if 'Reserved' in name:
         continue
@@ -147,11 +151,20 @@ def processSection(lines):
         tabs = '\t' * math.ceil((longLen - len(startLine))/tabWidth)
       else:
         tabs = '\t'
-      
+        
+        
       output(comment)
+      
+      if name in registerNames:
+        output('/*************************************************')
+        output('** Fixme: Duplicate bit name in this register ****')
+        output('*************************************************/')
+      else:
+        registerNames.append(name)
+        
       output(startLine+tabs+endLine)
       output()
-  
+      
   return linesDone
   
 def processSections(lines):
@@ -160,6 +173,7 @@ def processSections(lines):
   while (linesStart < linesTodo):
     linesDone = processSection(lines[linesStart:])
     linesStart += linesDone
+    output()
 
 lines = intext.split('\n')
 
