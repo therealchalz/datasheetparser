@@ -1,0 +1,31 @@
+This is a little script to parse copied text from the STM32L4 Technical Reference Manual and generate libopencm3-compatible driver header files, which contain registers and bits.
+
+See the example directory for an example input and output.  The input was just selected from the relevant section of the TRM and copied.
+
+Usage:
+Select the section of the datasheet that you want to parse. Copy. Run. Paste.
+
+For example, from the STM32L4 Technical Reference Manual, I'd select this
+part, between the double quotes:
+
+"
+40.8.1  Control register 1 (USART_CR1)
+Address offset: 0x00
+Reset value: 0x00
+<register info>
+Bits 31:29 Reserved,
+blah blah blah...
+40.8.2  Control register 2 (USART_CR2)
+.........
+blah blah blah, to the end of the last bit of the last register
+"
+
+Copy that to the clipboard and then run the software.  It will:
+- Read the text from the clipboard
+- Try to parse it
+- Save the output to your clipboard (as well as print it).
+
+Then you:
+- Paste it into your code
+- Select the next section you're interested in
+- Rinse and repeat

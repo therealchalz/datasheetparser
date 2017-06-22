@@ -1,0 +1,1120 @@
+40.8.1
+Control register 1 (USART_CR1)
+Address offset: 0x00
+Reset value: 0x0000
+31 30 29 28 27 26
+Res. Res. Res. M1 EOBIE RTOIE
+rw rw rw
+25
+24
+23
+22
+21
+20
+19
+DEAT[4:0]
+rw
+rw
+rw
+18
+17 16
+rw rw
+DEDT[4:0]
+rw
+15 14 13 12 11 10 9 8 7 6
+OVER8 CMIE MME M0 WAKE PCE PS PEIE TXEIE TCIE
+rw rw rw rw rw rw rw rw rw rw
+rw rw
+5 4
+RXNEIE IDLEIE
+rw
+rw
+rw
+rw
+3 2 1 0
+TE RE UESM UE
+rw rw rw rw
+Bits 31:29 Reserved, must be kept at reset value
+Bit 28 M1: Word length
+This bit, with bit 12 (M0), determines the word length. It is set or cleared by software.
+M[1:0] = 00: 1 Start bit, 8 data bits, n stop bits
+M[1:0] = 01: 1 Start bit, 9 data bits, n stop bits
+M[1:0] = 10: 1 Start bit, 7 data bits, n stop bits
+This bit can only be written when the USART is disabled (UE=0).
+Note: In 7-bit data length mode, the Smartcard mode, LIN master mode and Auto baud rate
+(0x7F and 0x55 frames detection) are not supported.
+Bit 27 EOBIE: End of Block interrupt enable
+This bit is set and cleared by software.
+0: Interrupt is inhibited
+1: A USART interrupt is generated when the EOBF flag is set in the USART_ISR register
+Note: If the USART does not support Smartcard mode, this bit is reserved and forced by
+hardware to ‘0’. Please refer to Section 40.4: USART implementation on page 1304.
+Bit 26 RTOIE: Receiver timeout interrupt enable
+This bit is set and cleared by software.
+0: Interrupt is inhibited
+1: An USART interrupt is generated when the RTOF bit is set in the USART_ISR register.
+Note: If the USART does not support the Receiver timeout feature, this bit is reserved and
+forced by hardware to ‘0’. Section 40.4: USART implementation on page 1304.
+Bits 25:21 DEAT[4:0]: Driver Enable assertion time
+This 5-bit value defines the time between the activation of the DE (Driver Enable) signal and
+the beginning of the start bit. It is expressed in sample time units (1/8 or 1/16 bit duration,
+depending on the oversampling rate).
+This bit field can only be written when the USART is disabled (UE=0).
+Note: If the Driver Enable feature is not supported, this bit is reserved and must be kept
+cleared. Please refer to Section 40.4: USART implementation on page 1304.
+1346/1830
+DocID024597 Rev 5RM0351
+Universal synchronous asynchronous receiver transmitter (USART)
+Bits 20:16 DEDT[4:0]: Driver Enable de-assertion time
+This 5-bit value defines the time between the end of the last stop bit, in a transmitted
+message, and the de-activation of the DE (Driver Enable) signal. It is expressed in sample
+time units (1/8 or 1/16 bit duration, depending on the oversampling rate).
+If the USART_TDR register is written during the DEDT time, the new data is transmitted only
+when the DEDT and DEAT times have both elapsed.
+This bit field can only be written when the USART is disabled (UE=0).
+Note: If the Driver Enable feature is not supported, this bit is reserved and must be kept
+cleared. Please refer to Section 40.4: USART implementation on page 1304.
+Bit 15 OVER8: Oversampling mode
+0: Oversampling by 16
+1: Oversampling by 8
+This bit can only be written when the USART is disabled (UE=0).
+Note: In LIN, IrDA and modes, this bit must be kept cleared.
+Bit 14 CMIE: Character match interrupt enable
+This bit is set and cleared by software.
+0: Interrupt is inhibited
+1: A USART interrupt is generated when the CMF bit is set in the USART_ISR register.
+Bit 13 MME: Mute mode enable
+This bit activates the mute mode function of the USART. when set, the USART can switch
+between the active and mute modes, as defined by the WAKE bit. It is set and cleared by
+software.
+0: Receiver in active mode permanently
+1: Receiver can switch between mute mode and active mode.
+Bit 12 M0: Word length
+This bit, with bit 28 (M1), determines the word length. It is set or cleared by software. See Bit
+28 (M1) description.
+This bit can only be written when the USART is disabled (UE=0).
+Bit 11 WAKE: Receiver wakeup method
+This bit determines the USART wakeup method from Mute mode. It is set or cleared by
+software.
+0: Idle line
+1: Address mark
+This bit field can only be written when the USART is disabled (UE=0).
+Bit 10 PCE: Parity control enable
+This bit selects the hardware parity control (generation and detection). When the parity
+control is enabled, the computed parity is inserted at the MSB position (9th bit if M=1; 8th bit
+if M=0) and parity is checked on the received data. This bit is set and cleared by software.
+Once it is set, PCE is active after the current byte (in reception and in transmission).
+0: Parity control disabled
+1: Parity control enabled
+This bit field can only be written when the USART is disabled (UE=0).
+Bit 9 PS: Parity selection
+This bit selects the odd or even parity when the parity generation/detection is enabled (PCE
+bit set). It is set and cleared by software. The parity will be selected after the current byte.
+0: Even parity
+1: Odd parity
+This bit field can only be written when the USART is disabled (UE=0).
+DocID024597 Rev 5
+1347/1830
+1411Universal synchronous asynchronous receiver transmitter (USART)
+RM0351
+Bit 8 PEIE: PE interrupt enable
+This bit is set and cleared by software.
+0: Interrupt is inhibited
+1: A USART interrupt is generated whenever PE=1 in the USART_ISR register
+Bit 7 TXEIE: interrupt enable
+This bit is set and cleared by software.
+0: Interrupt is inhibited
+1: A USART interrupt is generated whenever TXE=1 in the USART_ISR register
+Bit 6 TCIE: Transmission complete interrupt enable
+This bit is set and cleared by software.
+0: Interrupt is inhibited
+1: A USART interrupt is generated whenever TC=1 in the USART_ISR register
+Bit 5 RXNEIE: RXNE interrupt enable
+This bit is set and cleared by software.
+0: Interrupt is inhibited
+1: A USART interrupt is generated whenever ORE=1 or RXNE=1 in the USART_ISR
+register
+Bit 4 IDLEIE: IDLE interrupt enable
+This bit is set and cleared by software.
+0: Interrupt is inhibited
+1: A USART interrupt is generated whenever IDLE=1 in the USART_ISR register
+Bit 3 TE: Transmitter enable
+This bit enables the transmitter. It is set and cleared by software.
+0: Transmitter is disabled
+1: Transmitter is enabled
+Note: During transmission, a “0” pulse on the TE bit (“0” followed by “1”) sends a preamble
+(idle line) after the current word, except in Smartcard mode. In order to generate an idle
+character, the TE must not be immediately written to 1. In order to ensure the required
+duration, the software can poll the TEACK bit in the USART_ISR register.
+In Smartcard mode, when TE is set there is a 1 bit-time delay before the transmission
+starts.
+1348/1830
+DocID024597 Rev 5RM0351
+Universal synchronous asynchronous receiver transmitter (USART)
+Bit 2 RE: Receiver enable
+This bit enables the receiver. It is set and cleared by software.
+0: Receiver is disabled
+1: Receiver is enabled and begins searching for a start bit
+Bit 1 UESM: USART enable in Stop mode
+When this bit is cleared, the USART is not able to wake up the MCU from Stop mode.
+When this bit is set, the USART is able to wake up the MCU from Stop mode, provided that
+the USART clock selection is HSI16 or LSE in the RCC.
+This bit is set and cleared by software.
+0: USART not able to wake up the MCU from Stop mode.
+1: USART able to wake up the MCU from Stop mode. When this function is active, the clock
+source for the USART must be HSI16 or LSE (see Section Reset and clock control
+(RCC) .
+Note: It is recommended to set the UESM bit just before entering Stop mode and clear it on
+exit from Stop mode.
+If the USART does not support the wakeup from Stop feature, this bit is reserved and
+forced by hardware to ‘0’. Please refer to Section 40.4: USART implementation on
+page 1304.
+Bit 0 UE: USART enable
+When this bit is cleared, the USART prescalers and outputs are stopped immediately, and
+current operations are discarded. The configuration of the USART is kept, but all the status
+flags, in the USART_ISR are set to their default values. This bit is set and cleared by
+software.
+0: USART prescaler and outputs disabled, low-power mode
+1: USART enabled
+Note: In order to go into low-power mode without generating errors on the line, the TE bit
+must be reset before and the software must wait for the TC bit in the USART_ISR to be
+set before resetting the UE bit.
+The DMA requests are also reset when UE = 0 so the DMA channel must be disabled
+before resetting the UE bit.
+40.8.2
+Control register 2 (USART_CR2)
+Address offset: 0x04
+Reset value: 0x0000
+31
+30
+29
+28
+27
+ADD[7:4]
+26
+25
+24
+ADD[3:0]
+23
+RTOEN
+22
+21
+ABRMOD[1:0]
+20
+19
+18
+17
+MSBFI
+ABREN
+DATAINV TXINV
+RST
+16
+RXINV
+rw rw rw rw rw rw rw rw rw rw rw rw rw rw rw rw
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+SWAP LINEN CLKEN CPOL CPHA LBCL Res. LBDIE LBDL ADDM7 Res. Res. Res. Res.
+rw rw rw rw rw rw rw rw rw
+STOP[1:0]
+rw
+rw
+DocID024597 Rev 5
+1349/1830
+1411Universal synchronous asynchronous receiver transmitter (USART)
+RM0351
+Bits 31:28 ADD[7:4]: Address of the USART node
+This bit-field gives the address of the USART node or a character code to be recognized.
+This is used in multiprocessor communication during Mute mode or Stop mode, for wakeup with 7-
+bit address mark detection. The MSB of the character sent by the transmitter should be equal to 1.
+It may also be used for character detection during normal reception, Mute mode inactive (for
+example, end of block detection in ModBus protocol). In this case, the whole received character (8-
+bit) is compared to the ADD[7:0] value and CMF flag is set on match.
+This bit field can only be written when reception is disabled (RE = 0) or the USART is disabled
+(UE=0)
+Bits 27:24 ADD[3:0]: Address of the USART node
+This bit-field gives the address of the USART node or a character code to be recognized.
+This is used in multiprocessor communication during Mute mode or Stop mode, for wakeup with
+address mark detection.
+This bit field can only be written when reception is disabled (RE = 0) or the USART is disabled
+(UE=0)
+Bit 23 RTOEN: Receiver timeout enable
+This bit is set and cleared by software.
+0: Receiver timeout feature disabled.
+1: Receiver timeout feature enabled.
+When this feature is enabled, the RTOF flag in the USART_ISR register is set if the RX line is idle
+(no reception) for the duration programmed in the RTOR (receiver timeout register).
+Note: If the USART does not support the Receiver timeout feature, this bit is reserved and forced by
+hardware to ‘0’. Please refer to Section 40.4: USART implementation on page 1304.
+Bits 22:21 ABRMOD[1:0]: Auto baud rate mode
+These bits are set and cleared by software.
+00: Measurement of the start bit is used to detect the baud rate.
+01: Falling edge to falling edge measurement. (the received frame must start with a single bit = 1 ->
+Frame = Start10xxxxxx)
+10: 0x7F frame detection.
+11: 0x55 frame detection
+This bit field can only be written when ABREN = 0 or the USART is disabled (UE=0).
+Note: If DATAINV=1 and/or MSBFIRST=1 the patterns must be the same on the line, for example
+0xAA for MSBFIRST)
+If the USART does not support the auto baud rate feature, this bit is reserved and forced by
+hardware to ‘0’. Please refer to Section 40.4: USART implementation on page 1304.
+Bit 20 ABREN: Auto baud rate enable
+This bit is set and cleared by software.
+0: Auto baud rate detection is disabled.
+1: Auto baud rate detection is enabled.
+Note: If the USART does not support the auto baud rate feature, this bit is reserved and forced by
+hardware to ‘0’. Please refer to Section 40.4: USART implementation on page 1304.
+Bit 19 MSBFIRST: Most significant bit first
+This bit is set and cleared by software.
+0: data is transmitted/received with data bit 0 first, following the start bit.
+1: data is transmitted/received with the MSB (bit 7/8/9) first, following the start bit.
+This bit field can only be written when the USART is disabled (UE=0).
+1350/1830
+DocID024597 Rev 5RM0351
+Universal synchronous asynchronous receiver transmitter (USART)
+Bit 18 DATAINV: Binary data inversion
+This bit is set and cleared by software.
+0: Logical data from the data register are send/received in positive/direct logic. (1=H, 0=L)
+1: Logical data from the data register are send/received in negative/inverse logic. (1=L, 0=H). The
+parity bit is also inverted.
+This bit field can only be written when the USART is disabled (UE=0).
+Bit 17 TXINV: TX pin active level inversion
+This bit is set and cleared by software.
+0: TX pin signal works using the standard logic levels (V DD =1/idle, Gnd=0/mark)
+1: TX pin signal values are inverted. (V DD =0/mark, Gnd=1/idle).
+This allows the use of an external inverter on the TX line.
+This bit field can only be written when the USART is disabled (UE=0).
+Bit 16 RXINV: RX pin active level inversion
+This bit is set and cleared by software.
+0: RX pin signal works using the standard logic levels (V DD =1/idle, Gnd=0/mark)
+1: RX pin signal values are inverted. (V DD =0/mark, Gnd=1/idle).
+This allows the use of an external inverter on the RX line.
+This bit field can only be written when the USART is disabled (UE=0).
+Bit 15 SWAP: Swap TX/RX pins
+This bit is set and cleared by software.
+0: TX/RX pins are used as defined in standard pinout
+1: The TX and RX pins functions are swapped. This allows to work in the case of a cross-wired
+connection to another USART.
+This bit field can only be written when the USART is disabled (UE=0).
+Bit 14 LINEN: LIN mode enable
+This bit is set and cleared by software.
+0: LIN mode disabled
+1: LIN mode enabled
+The LIN mode enables the capability to send LIN Sync Breaks (13 low bits) using the SBKRQ bit in
+the USART_RQR register, and to detect LIN Sync breaks.
+This bit field can only be written when the USART is disabled (UE=0).
+Note: If the USART does not support LIN mode, this bit is reserved and forced by hardware to ‘0’.
+Please refer to Section 40.4: USART implementation on page 1304.
+Bits 13:12 STOP[1:0]: STOP bits
+These bits are used for programming the stop bits.
+00: 1 stop bit
+01: 0.5 stop bit
+10: 2 stop bits
+11: 1.5 stop bits
+This bit field can only be written when the USART is disabled (UE=0).
+Bit 11 CLKEN: Clock enable
+This bit allows the user to enable the CK pin.
+0: CK pin disabled
+1: CK pin enabled
+This bit can only be written when the USART is disabled (UE=0).
+Note: If neither synchronous mode nor Smartcard mode is supported, this bit is reserved and forced
+by hardware to ‘0’. Please refer to Section 40.4: USART implementation on page 1304.
+DocID024597 Rev 5
+1351/1830
+1411Universal synchronous asynchronous receiver transmitter (USART)
+RM0351
+Note: In order to provide correctly the CK clock to the Smartcard, the steps below must be
+respected:
+- UE = 0
+- SCEN = 1
+- GTPR configuration
+- CLKEN= 1
+- UE = 1
+Bit 10 CPOL: Clock polarity
+This bit allows the user to select the polarity of the clock output on the CK pin in synchronous mode.
+It works in conjunction with the CPHA bit to produce the desired clock/data relationship
+0: Steady low value on CK pin outside transmission window
+1: Steady high value on CK pin outside transmission window
+This bit can only be written when the USART is disabled (UE=0).
+Note: If synchronous mode is not supported, this bit is reserved and forced by hardware to ‘0’.
+Please refer to Section 40.4: USART implementation on page 1304.
+Bit 9 CPHA: Clock phase
+This bit is used to select the phase of the clock output on the CK pin in synchronous mode. It works
+in conjunction with the CPOL bit to produce the desired clock/data relationship (see Figure 418 and
+Figure 419)
+0: The first clock transition is the first data capture edge
+1: The second clock transition is the first data capture edge
+This bit can only be written when the USART is disabled (UE=0).
+Note: If synchronous mode is not supported, this bit is reserved and forced by hardware to ‘0’.
+Please refer to Section 40.4: USART implementation on page 1304.
+Bit 8 LBCL: Last bit clock pulse
+This bit is used to select whether the clock pulse associated with the last data bit transmitted (MSB)
+has to be output on the CK pin in synchronous mode.
+0: The clock pulse of the last data bit is not output to the CK pin
+1: The clock pulse of the last data bit is output to the CK pin
+Caution: The last bit is the 7th or 8th or 9th data bit transmitted depending on the 7 or 8 or 9 bit
+format selected by the M bits in the USART_CR1 register.
+This bit can only be written when the USART is disabled (UE=0).
+Note: If synchronous mode is not supported, this bit is reserved and forced by hardware to ‘0’.
+Please refer to Section 40.4: USART implementation on page 1304.
+Bit 7 Reserved, must be kept at reset value.
+Bit 6 LBDIE: LIN break detection interrupt enable
+Break interrupt mask (break detection using break delimiter).
+0: Interrupt is inhibited
+1: An interrupt is generated whenever LBDF=1 in the USART_ISR register
+Note: If LIN mode is not supported, this bit is reserved and forced by hardware to ‘0’. Please refer to
+Section 40.4: USART implementation on page 1304.
+1352/1830
+DocID024597 Rev 5RM0351
+Universal synchronous asynchronous receiver transmitter (USART)
+Bit 5 LBDL: LIN break detection length
+This bit is for selection between 11 bit or 10 bit break detection.
+0: 10-bit break detection
+1: 11-bit break detection
+This bit can only be written when the USART is disabled (UE=0).
+Note: If LIN mode is not supported, this bit is reserved and forced by hardware to ‘0’. Please refer to
+Section 40.4: USART implementation on page 1304.
+Bit 4 ADDM7:7-bit Address Detection/4-bit Address Detection
+This bit is for selection between 4-bit address detection or 7-bit address detection.
+0: 4-bit address detection
+1: 7-bit address detection (in 8-bit data mode)
+This bit can only be written when the USART is disabled (UE=0)
+Note: In 7-bit and 9-bit data modes, the address detection is done on 6-bit and 8-bit address
+(ADD[5:0] and ADD[7:0]) respectively.
+Bits 3:0 Reserved, must be kept at reset value.
+Note: The 3 bits (CPOL, CPHA, LBCL) should not be written while the transmitter is enabled.
+40.8.3 Control register 3 (USART_CR3)
+Address offset: 0x08
+Reset value: 0x0000
+31
+Res.
+15
+30
+Res.
+14
+29
+Res.
+28
+Res.
+27
+Res.
+26
+Res.
+25
+24
+Res.
+23
+22
+21
+TCBGT
+UCESM WUFIE
+IE
+20
+19
+WUS
+18
+17
+SCARCNT2:0]
+16
+Res.
+rw rw rw rw rw rw rw rw
+13 12 11 10 9 8 7 6 5 4 3 2 1 0
+ONE
+BIT CTSIE CTSE RTSE DMAT DMAR SCEN NACK HDSEL IRLP IREN EIE
+rw rw rw rw rw rw v v rw rw rw rw
+DEP DEM DDRE OVR
+DIS
+rw rw rw rw
+Bits 31:25 Reserved, must be kept at reset value.
+Bit 24 TCBGTIE: Transmission complete before guard time interrupt enable
+This bit is set and cleared by software.
+0: Interrupt is inhibited
+1: An USART interrupt is generated whenever TCBGT=1 in the USART_ISR register.
+Note: If Smartcard mode is not supported, this bit is reserved and forced by hardware to ‘0’
+(see Section 40.4: USART implementation).
+Note: This bit is available on STM32L496xx/4A6xx devices only
+Bit 23 UCESM: USART Clock Enable in Stop mode.
+This bit is set and cleared by software.
+0: USART Clock is disabled in STOP mode.
+1: USART Clock is enabled in STOP mode.
+DocID024597 Rev 5
+1353/1830
+1411Universal synchronous asynchronous receiver transmitter (USART)
+RM0351
+Bit 22 WUFIE: Wakeup from Stop mode interrupt enable
+This bit is set and cleared by software.
+0: Interrupt is inhibited
+1: An USART interrupt is generated whenever WUF=1 in the USART_ISR register
+Note: WUFIE must be set before entering in Stop mode.
+The WUF interrupt is active only in Stop mode.
+If the USART does not support the wakeup from Stop feature, this bit is reserved and
+forced by hardware to ‘0’.
+Bits 21:20 WUS[1:0]: Wakeup from Stop mode interrupt flag selection
+This bit-field specify the event which activates the WUF (wakeup from Stop mode flag).
+00: WUF active on address match (as defined by ADD[7:0] and ADDM7)
+01:Reserved.
+10: WuF active on Start bit detection
+11: WUF active on RXNE.
+This bit field can only be written when the USART is disabled (UE=0).
+Note: If the USART does not support the wakeup from Stop feature, this bit is reserved and
+forced by hardware to ‘0’.
+Bits 19:17 SCARCNT[2:0]: Smartcard auto-retry count
+This bit-field specifies the number of retries in transmit and receive, in Smartcard mode.
+In transmission mode, it specifies the number of automatic retransmission retries, before
+generating a transmission error (FE bit set).
+In reception mode, it specifies the number or erroneous reception trials, before generating a
+reception error (RXNE and PE bits set).
+This bit field must be programmed only when the USART is disabled (UE=0).
+When the USART is enabled (UE=1), this bit field may only be written to 0x0, in order to stop
+retransmission.
+0x0: retransmission disabled - No automatic retransmission in transmit mode.
+0x1 to 0x7: number of automatic retransmission attempts (before signaling error)
+Note: If Smartcard mode is not supported, this bit is reserved and forced by hardware to ‘0’.
+Please refer to Section 40.4: USART implementation on page 1304.
+Bit16 Reserved, must be kept at reset value.
+Bit 15 DEP: Driver enable polarity selection
+0: DE signal is active high.
+1: DE signal is active low.
+This bit can only be written when the USART is disabled (UE=0).
+Note: If the Driver Enable feature is not supported, this bit is reserved and must be kept
+cleared. Please refer to Section 40.4: USART implementation on page 1304.
+Bit 14 DEM: Driver enable mode
+This bit allows the user to activate the external transceiver control, through the DE signal.
+0: DE function is disabled.
+1: DE function is enabled. The DE signal is output on the RTS pin.
+This bit can only be written when the USART is disabled (UE=0).
+Note: If the Driver Enable feature is not supported, this bit is reserved and must be kept
+cleared. Section 40.4: USART implementation on page 1304.
+1354/1830
+DocID024597 Rev 5RM0351
+Universal synchronous asynchronous receiver transmitter (USART)
+Bit 13 DDRE: DMA Disable on Reception Error
+0: DMA is not disabled in case of reception error. The corresponding error flag is set but
+RXNE is kept 0 preventing from overrun. As a consequence, the DMA request is not
+asserted, so the erroneous data is not transferred (no DMA request), but next correct
+received data will be transferred (used for Smartcard mode).
+1: DMA is disabled following a reception error. The corresponding error flag is set, as well as
+RXNE. The DMA request is masked until the error flag is cleared. This means that the
+software must first disable the DMA request (DMAR = 0) or clear RXNE before clearing the
+error flag.
+This bit can only be written when the USART is disabled (UE=0).
+Note: The reception errors are: parity error, framing error or noise error.
+Bit 12 OVRDIS: Overrun Disable
+This bit is used to disable the receive overrun detection.
+0: Overrun Error Flag, ORE, is set when received data is not read before receiving new data.
+1: Overrun functionality is disabled. If new data is received while the RXNE flag is still set
+the ORE flag is not set and the new received data overwrites the previous content of the
+USART_RDR register.
+This bit can only be written when the USART is disabled (UE=0).
+Note: This control bit allows checking the communication flow without reading the data.
+Bit 11 ONEBIT: One sample bit method enable
+This bit allows the user to select the sample method. When the one sample bit method is
+selected the noise detection flag (NF) is disabled.
+0: Three sample bit method
+1: One sample bit method
+This bit can only be written when the USART is disabled (UE=0).
+Note: ONEBIT feature applies only to data bits, It does not apply to Start bit.
+Bit 10 CTSIE: CTS interrupt enable
+0: Interrupt is inhibited
+1: An interrupt is generated whenever CTSIF=1 in the USART_ISR register
+Note: If the hardware flow control feature is not supported, this bit is reserved and forced by
+hardware to ‘0’. Please refer to Section 40.4: USART implementation on page 1304.
+Bit 9 CTSE: CTS enable
+0: CTS hardware flow control disabled
+1: CTS mode enabled, data is only transmitted when the CTS input is asserted (tied to 0). If
+the CTS input is de-asserted while data is being transmitted, then the transmission is
+completed before stopping. If data is written into the data register while CTS is de-asserted,
+the transmission is postponed until CTS is asserted.
+This bit can only be written when the USART is disabled (UE=0)
+Note: If the hardware flow control feature is not supported, this bit is reserved and forced by
+hardware to ‘0’. Please refer to Section 40.4: USART implementation on page 1304.
+Bit 8 RTSE: RTS enable
+0: RTS hardware flow control disabled
+1: RTS output enabled, data is only requested when there is space in the receive buffer. The
+transmission of data is expected to cease after the current character has been transmitted.
+The RTS output is asserted (pulled to 0) when data can be received.
+This bit can only be written when the USART is disabled (UE=0).
+Note: If the hardware flow control feature is not supported, this bit is reserved and forced by
+hardware to ‘0’. Please refer to Section 40.4: USART implementation on page 1304.
+DocID024597 Rev 5
+1355/1830
+1411Universal synchronous asynchronous receiver transmitter (USART)
+RM0351
+Bit 7 DMAT: DMA enable transmitter
+This bit is set/reset by software
+1: DMA mode is enabled for transmission
+0: DMA mode is disabled for transmission
+Bit 6 DMAR: DMA enable receiver
+This bit is set/reset by software
+1: DMA mode is enabled for reception
+0: DMA mode is disabled for reception
+Bit 5 SCEN: Smartcard mode enable
+This bit is used for enabling Smartcard mode.
+0: Smartcard Mode disabled
+1: Smartcard Mode enabled
+This bit field can only be written when the USART is disabled (UE=0).
+Note: If the USART does not support Smartcard mode, this bit is reserved and forced by
+hardware to ‘0’. Please refer to Section 40.4: USART implementation on page 1304.
+Bit 4 NACK: Smartcard NACK enable
+0: NACK transmission in case of parity error is disabled
+1: NACK transmission during parity error is enabled
+This bit field can only be written when the USART is disabled (UE=0).
+Note: If the USART does not support Smartcard mode, this bit is reserved and forced by
+hardware to ‘0’. Please refer to Section 40.4: USART implementation on page 1304.
+Bit 3 HDSEL: Half-duplex selection
+Selection of Single-wire Half-duplex mode
+0: Half duplex mode is not selected
+1: Half duplex mode is selected
+This bit can only be written when the USART is disabled (UE=0).
+Bit 2 IRLP: IrDA low-power
+This bit is used for selecting between normal and low-power IrDA modes
+0: Normal mode
+1: Low-power mode
+This bit can only be written when the USART is disabled (UE=0).
+Note: If IrDA mode is not supported, this bit is reserved and forced by hardware to ‘0’. Please
+refer to Section 40.4: USART implementation on page 1304.
+Bit 1 IREN: IrDA mode enable
+This bit is set and cleared by software.
+0: IrDA disabled
+1: IrDA enabled
+This bit can only be written when the USART is disabled (UE=0).
+Note: If IrDA mode is not supported, this bit is reserved and forced by hardware to ‘0’. Please
+refer to Section 40.4: USART implementation on page 1304.
+Bit 0 EIE: Error interrupt enable
+Error Interrupt Enable Bit is required to enable interrupt generation in case of a framing
+error, overrun error or noise flag (FE=1 or ORE=1 or NF=1 in the USART_ISR register).
+0: Interrupt is inhibited
+1: An interrupt is generated when FE=1 or ORE=1 or NF=1 in the USART_ISR register.
+1356/1830
+DocID024597 Rev 5RM0351
+Universal synchronous asynchronous receiver transmitter (USART)
+40.8.4
+Baud rate register (USART_BRR)
+This register can only be written when the USART is disabled (UE=0). It may be
+automatically updated by hardware in auto baud rate detection mode.
+Address offset: 0x0C
+Reset value: 0x0000
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
+Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res.
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+rw rw rw rw rw rw rw
+BRR[15:0]
+rw
+rw
+rw
+rw
+rw
+rw
+rw
+rw
+rw
+Bits 31:16 Reserved, must be kept at reset value.
+Bits 15:4 BRR[15:4]
+BRR[15:4] = USARTDIV[15:4]
+Bits 3:0 BRR[3:0]
+When OVER8 = 0, BRR[3:0] = USARTDIV[3:0].
+When OVER8 = 1:
+BRR[2:0] = USARTDIV[3:0] shifted 1 bit to the right.
+BRR[3] must be kept cleared.
+40.8.5
+Guard time and prescaler register (USART_GTPR)
+Address offset: 0x10
+Reset value: 0x0000
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
+Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res.
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+GT[7:0] PSC[7:0]
+rw rw
+DocID024597 Rev 5
+1357/1830
+1411Universal synchronous asynchronous receiver transmitter (USART)
+RM0351
+Bits 31:16 Reserved, must be kept at reset value
+Bits 15:8 GT[7:0]: Guard time value
+This bit-field is used to program the Guard time value in terms of number of baud clock
+periods.
+This is used in Smartcard mode. The Transmission Complete flag is set after this guard time
+value.
+This bit field can only be written when the USART is disabled (UE=0).
+Note: If Smartcard mode is not supported, this bit is reserved and forced by hardware to ‘0’.
+Please refer to Section 40.4: USART implementation on page 1304.
+Bits 7:0 PSC[7:0]: Prescaler value
+In IrDA Low-power and normal IrDA mode:
+PSC[7:0] = IrDA Normal and Low-Power Baud Rate
+Used for programming the prescaler for dividing the USART source clock to achieve the low-
+power frequency:
+The source clock is divided by the value given in the register (8 significant bits):
+00000000: Reserved - do not program this value
+00000001: divides the source clock by 1
+00000010: divides the source clock by 2
+...
+In Smartcard mode:
+PSC[4:0]: Prescaler value
+Used for programming the prescaler for dividing the USART source clock to provide the
+Smartcard clock.
+The value given in the register (5 significant bits) is multiplied by 2 to give the division factor
+of the source clock frequency:
+00000: Reserved - do not program this value
+00001: divides the source clock by 2
+00010: divides the source clock by 4
+00011: divides the source clock by 6
+...
+This bit field can only be written when the USART is disabled (UE=0).
+Note: Bits [7:5] must be kept cleared if Smartcard mode is used.
+This bit field is reserved and forced by hardware to ‘0’ when the Smartcard and IrDA
+modes are not supported. Please refer to Section 40.4: USART implementation on
+page 1304.
+40.8.6
+Receiver timeout register (USART_RTOR)
+Address offset: 0x14
+Reset value: 0x0000
+31
+30
+29
+28
+27
+26
+25
+24
+23
+22
+21
+BLEN[7:0]
+20
+19
+18 17 16
+RTO[23:16]
+rw rw rw rw rw rw rw rw rw rw rw rw rw rw rw rw
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+rw rw rw rw rw rw rw rw rw rw rw rw rw rw rw
+RTO[15:0]
+1358/1830
+rw
+DocID024597 Rev 5RM0351
+Universal synchronous asynchronous receiver transmitter (USART)
+Bits 31:24 BLEN[7:0]: Block Length
+This bit-field gives the Block length in Smartcard T=1 Reception. Its value equals the number
+of information characters + the length of the Epilogue Field (1-LEC/2-CRC) - 1.
+Examples:
+BLEN = 0 -> 0 information characters + LEC
+BLEN = 1 -> 0 information characters + CRC
+BLEN = 255 -> 254 information characters + CRC (total 256 characters))
+In Smartcard mode, the Block length counter is reset when TXE=0.
+This bit-field can be used also in other modes. In this case, the Block length counter is reset
+when RE=0 (receiver disabled) and/or when the EOBCF bit is written to 1.
+Note: This value can be programmed after the start of the block reception (using the data
+from the LEN character in the Prologue Field). It must be programmed only once per
+received block.
+Bits 23:0 RTO[23:0]: Receiver timeout value
+This bit-field gives the Receiver timeout value in terms of number of bit duration.
+In standard mode, the RTOF flag is set if, after the last received character, no new start bit is
+detected for more than the RTO value.
+In Smartcard mode, this value is used to implement the CWT and BWT. See Smartcard
+section for more details.
+In this case, the timeout measurement is done starting from the Start Bit of the last received
+character.
+Note: This value must only be programmed once per received character.
+Note:
+RTOR can be written on the fly. If the new value is lower than or equal to the counter, the
+RTOF flag is set.
+This register is reserved and forced by hardware to “0x00000000” when the Receiver
+timeout feature is not supported. Please refer to Section 40.4: USART implementation on
+page 1304 .
+40.8.7
+Request register (USART_RQR)
+Address offset: 0x18
+Reset value: 0x0000
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
+Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res.
+4 3 2 1 0
+15 14 13 12 11 10 9 8 7 6 5
+Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res.
+TXFRQ RXFRQ MMRQ SBKRQ ABRRQ
+w
+DocID024597 Rev 5
+w
+w
+w
+w
+1359/1830
+1411Universal synchronous asynchronous receiver transmitter (USART)
+RM0351
+Bits 31:5 Reserved, must be kept at reset value
+Bit 4 TXFRQ: Transmit data flush request
+Writing 1 to this bit sets the TXE flag.
+This allows to discard the transmit data. This bit must be used only in Smartcard mode,
+when data has not been sent due to errors (NACK) and the FE flag is active in the
+USART_ISR register.
+If the USART does not support Smartcard mode, this bit is reserved and forced by hardware
+to ‘0’. Please refer to Section 40.4: USART implementation on page 1304.
+Bit 3 RXFRQ: Receive data flush request
+Writing 1 to this bit clears the RXNE flag.
+This allows to discard the received data without reading it, and avoid an overrun condition.
+Bit 2 MMRQ: Mute mode request
+Writing 1 to this bit puts the USART in mute mode and sets the RWU flag.
+Bit 1 SBKRQ: Send break request
+Writing 1 to this bit sets the SBKF flag and request to send a BREAK on the line, as soon as
+the transmit machine is available.
+Note: In the case the application needs to send the break character following all previously
+inserted data, including the ones not yet transmitted, the software should wait for the
+TXE flag assertion before setting the SBKRQ bit.
+Bit 0 ABRRQ: Auto baud rate request
+Writing 1 to this bit resets the ABRF flag in the USART_ISR and request an automatic baud
+rate measurement on the next received data frame.
+Note: If the USART does not support the auto baud rate feature, this bit is reserved and
+forced by hardware to ‘0’. Please refer to Section 40.4: USART implementation on
+page 1304.
+40.8.8
+Interrupt and status register (USART_ISR)
+Address offset: 0x1C
+Reset value: 0x0200 00C0
+31 30 29 28 27 26 25 24 23 Res. Res. Res. Res. Res. Res. TCBGT Res. Res.
+22
+r r r r r r r
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+ABRF ABRE Res. EOBF RTOF CTS CTSIF LBDF TXE TC RXNE IDLE ORE NF FE PE
+r r r r r r r r r r r r r r r
+r
+1360/1830
+21
+REACK TEACK
+DocID024597 Rev 5
+20 19 18 17 16
+WUF RWU SBKF CMF BUSYRM0351
+Universal synchronous asynchronous receiver transmitter (USART)
+Bits 31:26 Reserved, must be kept at reset value.
+Bit 25 TCBGT: Transmission complete before guard time completion.
+This bit is used in Smartcard mode. It is set by hardware if the transmission of a frame
+containing data has completed successfully (no NACK received from the card) and before
+the guard time has elapsed (contrary to the TC flag which is set when the guard time has
+elapsed).
+An interrupt is generated if TCBGTIE=1 in USART_CR3 register. It is cleared by software,
+by writing 1 to TCBGTCF in USART_ICR or by writing to the USART_TDR register.
+0: Transmission not complete or transmission completed with error (i.e. NACK received from
+the card)
+1: Transmission complete (before Guard time has elapsed and no NACK received from the
+smartcard).
+Note: If the USART does not support the Smartcard mode, this bit is reserved and forced by
+hardware to ‘0’. If the USART supports the Smartcard mode and the Smartcard mode
+is enabled, the TCBGT reset value is 1.
+Note: This bit is available on STM32L496xx/4A6xx devices only
+Bits 24:23 Reserved, must be kept at reset value.
+Bit 22 REACK: Receive enable acknowledge flag
+This bit is set/reset by hardware, when the Receive Enable value is taken into account by
+the USART.
+When the wakeup from Stop mode is supported, the REACK flag can be used to verify that
+the USART is ready for reception before entering Stop mode.
+Bit 21 TEACK: Transmit enable acknowledge flag
+This bit is set/reset by hardware, when the Transmit Enable value is taken into account by
+the USART.
+It can be used when an idle frame request is generated by writing TE=0, followed by TE=1
+in the USART_CR1 register, in order to respect the TE=0 minimum period.
+Bit 20 WUF: Wakeup from Stop mode flag
+This bit is set by hardware, when a wakeup event is detected. The event is defined by the
+WUS bit field. It is cleared by software, writing a 1 to the WUCF in the USART_ICR register.
+An interrupt is generated if WUFIE=1 in the USART_CR3 register.
+Note: When UESM is cleared, WUF flag is also cleared.
+The WUF interrupt is active only in Stop mode.
+If the USART does not support the wakeup from Stop feature, this bit is reserved and
+forced by hardware to ‘0’.
+Bit 19 RWU: Receiver wakeup from Mute mode
+This bit indicates if the USART is in mute mode. It is cleared/set by hardware when a
+wakeup/mute sequence is recognized. The mute mode control sequence (address or IDLE)
+is selected by the WAKE bit in the USART_CR1 register.
+When wakeup on IDLE mode is selected, this bit can only be set by software, writing 1 to the
+MMRQ bit in the USART_RQR register.
+0: Receiver in active mode
+1: Receiver in mute mode
+Bit 18 SBKF: Send break flag
+This bit indicates that a send break character was requested. It is set by software, by writing
+1 to the SBKRQ bit in the USART_RQR register. It is automatically reset by hardware during
+the stop bit of break transmission.
+0: No break character is transmitted
+1: Break character will be transmitted
+DocID024597 Rev 5
+1361/1830
+1411Universal synchronous asynchronous receiver transmitter (USART)
+RM0351
+Bit 17 CMF: Character match flag
+This bit is set by hardware, when the character defined by ADD[7:0] is received. It is cleared
+by software, writing 1 to the CMCF in the USART_ICR register.
+An interrupt is generated if CMIE=1in the USART_CR1 register.
+0: No Character match detected
+1: Character Match detected
+Bit 16 BUSY: Busy flag
+This bit is set and reset by hardware. It is active when a communication is ongoing on the
+RX line (successful start bit detected). It is reset at the end of the reception (successful or
+not).
+0: USART is idle (no reception)
+1: Reception on going
+Bit 15 ABRF: Auto baud rate flag
+This bit is set by hardware when the automatic baud rate has been set (RXNE will also be
+set, generating an interrupt if RXNEIE = 1) or when the auto baud rate operation was
+completed without success (ABRE=1) (ABRE, RXNE and FE are also set in this case)
+It is cleared by software, in order to request a new auto baud rate detection, by writing 1 to
+the ABRRQ in the USART_RQR register.
+Note: If the USART does not support the auto baud rate feature, this bit is reserved and
+forced by hardware to ‘0’.
+Bit 14 ABRE: Auto baud rate error
+This bit is set by hardware if the baud rate measurement failed (baud rate out of range or
+character comparison failed)
+It is cleared by software, by writing 1 to the ABRRQ bit in the USART_CR3 register.
+Note: If the USART does not support the auto baud rate feature, this bit is reserved and
+forced by hardware to ‘0’.
+Bit 13 Reserved, must be kept at reset value.
+Bit 12 EOBF: End of block flag
+This bit is set by hardware when a complete block has been received (for example T=1
+Smartcard mode). The detection is done when the number of received bytes (from the start
+of the block, including the prologue) is equal or greater than BLEN + 4.
+An interrupt is generated if the EOBIE=1 in the USART_CR2 register.
+It is cleared by software, writing 1 to the EOBCF in the USART_ICR register.
+0: End of Block not reached
+1: End of Block (number of characters) reached
+Note: If Smartcard mode is not supported, this bit is reserved and forced by hardware to ‘0’.
+Please refer to Section 40.4: USART implementation on page 1304.
+1362/1830
+DocID024597 Rev 5RM0351
+Universal synchronous asynchronous receiver transmitter (USART)
+Bit 11 RTOF: Receiver timeout
+This bit is set by hardware when the timeout value, programmed in the RTOR register has
+lapsed, without any communication. It is cleared by software, writing 1 to the RTOCF bit in
+the USART_ICR register.
+An interrupt is generated if RTOIE=1 in the USART_CR1 register.
+In Smartcard mode, the timeout corresponds to the CWT or BWT timings.
+0: Timeout value not reached
+1: Timeout value reached without any data reception
+Note: If a time equal to the value programmed in RTOR register separates 2 characters,
+RTOF is not set. If this time exceeds this value + 2 sample times (2/16 or 2/8,
+depending on the oversampling method), RTOF flag is set.
+The counter counts even if RE = 0 but RTOF is set only when RE = 1. If the timeout has
+already elapsed when RE is set, then RTOF will be set.
+If the USART does not support the Receiver timeout feature, this bit is reserved and
+forced by hardware to ‘0’.
+Bit 10 CTS: CTS flag
+This bit is set/reset by hardware. It is an inverted copy of the status of the CTS input pin.
+0: CTS line set
+1: CTS line reset
+Note: If the hardware flow control feature is not supported, this bit is reserved and forced by
+hardware to ‘0’.
+Bit 9 CTSIF: CTS interrupt flag
+This bit is set by hardware when the CTS input toggles, if the CTSE bit is set. It is cleared by
+software, by writing 1 to the CTSCF bit in the USART_ICR register.
+An interrupt is generated if CTSIE=1 in the USART_CR3 register.
+0: No change occurred on the CTS status line
+1: A change occurred on the CTS status line
+Note: If the hardware flow control feature is not supported, this bit is reserved and forced by
+hardware to ‘0’.
+Bit 8 LBDF: LIN break detection flag
+This bit is set by hardware when the LIN break is detected. It is cleared by software, by
+writing 1 to the LBDCF in the USART_ICR.
+An interrupt is generated if LBDIE = 1 in the USART_CR2 register.
+0: LIN Break not detected
+1: LIN break detected
+Note: If the USART does not support LIN mode, this bit is reserved and forced by hardware
+to ‘0’. Please refer to Section 40.4: USART implementation on page 1304.
+Bit 7 TXE: Transmit data register empty
+This bit is set by hardware when the content of the USART_TDR register has been
+transferred into the shift register. It is cleared by a write to the USART_TDR register.
+The TXE flag can also be cleared by writing 1 to the TXFRQ in the USART_RQR register, in
+order to discard the data (only in Smartcard T=0 mode, in case of transmission failure).
+An interrupt is generated if the TXEIE bit =1 in the USART_CR1 register.
+0: data is not transferred to the shift register
+1: data is transferred to the shift register)
+Note: This bit is used during single buffer transmission.
+DocID024597 Rev 5
+1363/1830
+1411Universal synchronous asynchronous receiver transmitter (USART)
+RM0351
+Bit 6 TC: Transmission complete
+This bit is set by hardware if the transmission of a frame containing data is complete and if
+TXE is set. An interrupt is generated if TCIE=1 in the USART_CR1 register. It is cleared by
+software, writing 1 to the TCCF in the USART_ICR register or by a write to the USART_TDR
+register.
+An interrupt is generated if TCIE=1 in the USART_CR1 register.
+0: Transmission is not complete
+1: Transmission is complete
+Note: If TE bit is reset and no transmission is on going, the TC bit will be set immediately.
+Bit 5 RXNE: Read data register not empty
+This bit is set by hardware when the content of the RDR shift register has been transferred
+to the USART_RDR register. It is cleared by a read to the USART_RDR register. The RXNE
+flag can also be cleared by writing 1 to the RXFRQ in the USART_RQR register.
+An interrupt is generated if RXNEIE=1 in the USART_CR1 register.
+0: data is not received
+1: Received data is ready to be read.
+Bit 4 IDLE: Idle line detected
+This bit is set by hardware when an Idle Line is detected. An interrupt is generated if
+IDLEIE=1 in the USART_CR1 register. It is cleared by software, writing 1 to the IDLECF in
+the USART_ICR register.
+0: No Idle line is detected
+1: Idle line is detected
+Note: The IDLE bit will not be set again until the RXNE bit has been set (i.e. a new idle line
+occurs).
+If mute mode is enabled (MME=1), IDLE is set if the USART is not mute (RWU=0),
+whatever the mute mode selected by the WAKE bit. If RWU=1, IDLE is not set.
+Bit 3 ORE: Overrun error
+This bit is set by hardware when the data currently being received in the shift register is
+ready to be transferred into the RDR register while RXNE=1. It is cleared by a software,
+writing 1 to the ORECF, in the USART_ICR register.
+An interrupt is generated if RXNEIE=1 or EIE = 1 in the USART_CR1 register.
+0: No overrun error
+1: Overrun error is detected
+Note: When this bit is set, the RDR register content is not lost but the shift register is
+overwritten. An interrupt is generated if the ORE flag is set during multibuffer
+communication if the EIE bit is set.
+This bit is permanently forced to 0 (no overrun detection) when the OVRDIS bit is set in
+the USART_CR3 register.
+1364/1830
+DocID024597 Rev 5RM0351
+Universal synchronous asynchronous receiver transmitter (USART)
+Bit 2 NF: START bit Noise detection flag
+This bit is set by hardware when noise is detected on a received frame. It is cleared by
+software, writing 1 to the NFCF bit in the USART_ICR register.
+0: No noise is detected
+1: Noise is detected
+Note: This bit does not generate an interrupt as it appears at the same time as the RXNE bit
+which itself generates an interrupt. An interrupt is generated when the NF flag is set
+during multibuffer communication if the EIE bit is set.
+Note: When the line is noise-free, the NF flag can be disabled by programming the ONEBIT
+bit to 1 to increase the USART tolerance to deviations (Refer to Section 40.5.5:
+Tolerance of the USART receiver to clock deviation on page 1320).
+Bit 1 FE: Framing error
+This bit is set by hardware when a de-synchronization, excessive noise or a break character
+is detected. It is cleared by software, writing 1 to the FECF bit in the USART_ICR register.
+In Smartcard mode, in transmission, this bit is set when the maximum number of transmit
+attempts is reached without success (the card NACKs the data frame).
+An interrupt is generated if EIE = 1 in the USART_CR1 register.
+0: No Framing error is detected
+1: Framing error or break character is detected
+Bit 0 PE: Parity error
+This bit is set by hardware when a parity error occurs in receiver mode. It is cleared by
+software, writing 1 to the PECF in the USART_ICR register.
+An interrupt is generated if PEIE = 1 in the USART_CR1 register.
+0: No parity error
+1: Parity error
+40.8.9
+Interrupt flag clear register (USART_ICR)
+Address offset: 0x20
+Reset value: 0x0000
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
+Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. WUCF Res. Res. CMCF Res.
+rc_w1
+15
+Res.
+14
+Res.
+13
+Res.
+12
+11
+EOBCF RTOCF
+rc_w1
+rc_w1
+10
+Res.
+9
+8
+7
+TCBGT
+CTSCF LBDCF
+CF
+rc_w1
+rc_w1
+rc_w1
+6 5
+TCCF Res.
+rc_w1
+4
+rc_w1
+3
+IDLECF ORECF
+rc_w1
+rc_w1
+2 1 0
+NCF FECF PECF
+rc_w1 rc_w1 rc_w1
+Bits 31:21 Reserved, must be kept at reset value.
+Bit 20 WUCF: Wakeup from Stop mode clear flag
+Writing 1 to this bit clears the WUF flag in the USART_ISR register.
+Note: If the USART does not support the wakeup from Stop feature, this bit is reserved and
+forced by hardware to ‘0’.
+Bits 19:18 Reserved, must be kept at reset value.
+Bit 17 CMCF: Character match clear flag
+Writing 1 to this bit clears the CMF flag in the USART_ISR register.
+Bits 16:13 Reserved, must be kept at reset value.
+DocID024597 Rev 5
+1365/1830
+1411Universal synchronous asynchronous receiver transmitter (USART)
+RM0351
+Bit 12 EOBCF: End of block clear flag
+Writing 1 to this bit clears the EOBF flag in the USART_ISR register.
+Note: If the USART does not support Smartcard mode, this bit is reserved and forced by
+hardware to ‘0’. Please refer to Section 40.4: USART implementation on page 1304.
+Bit 11 RTOCF: Receiver timeout clear flag
+Writing 1 to this bit clears the RTOF flag in the USART_ISR register.
+Note: If the USART does not support the Receiver timeout feature, this bit is reserved and
+forced by hardware to ‘0’. Please refer to Section 40.4: USART implementation on
+page 1304.
+Bit 10 Reserved, must be kept at reset value.
+Bit 9 CTSCF: CTS clear flag
+Writing 1 to this bit clears the CTSIF flag in the USART_ISR register.
+Note: If the hardware flow control feature is not supported, this bit is reserved and forced by
+hardware to ‘0’. Please refer to Section 40.4: USART implementation on page 1304.
+Bit 8 LBDCF: LIN break detection clear flag
+Writing 1 to this bit clears the LBDF flag in the USART_ISR register.
+Note: If LIN mode is not supported, this bit is reserved and forced by hardware to ‘0’. Please
+refer to Section 40.4: USART implementation on page 1304.
+Bit 7 TCBGTCF: Transmission completed before guard time clear flag
+Writing 1 to this bit clears the TCBGT flag in the USART_ISR register.
+Note: If the USART does not support SmartCard mode, this bit is reserved and forced by
+hardware to 0. Please refer to Section 40.4: USART implementation on page 1304).
+Note: This bit is available on STM32L496xx/4A6xx devices only
+Bit 6 TCCF: Transmission complete clear flag
+Writing 1 to this bit clears the TC flag in the USART_ISR register.
+Bit 5 Reserved, must be kept at reset value.
+Bit 4 IDLECF: Idle line detected clear flag
+Writing 1 to this bit clears the IDLE flag in the USART_ISR register.
+Bit 3 ORECF: Overrun error clear flag
+Writing 1 to this bit clears the ORE flag in the USART_ISR register.
+Bit 2 NCF: Noise detected clear flag
+Writing 1 to this bit clears the NF flag in the USART_ISR register.
+Bit 1 FECF: Framing error clear flag
+Writing 1 to this bit clears the FE flag in the USART_ISR register.
+Bit 0 PECF: Parity error clear flag
+Writing 1 to this bit clears the PE flag in the USART_ISR register.
+1366/1830
+DocID024597 Rev 5RM0351
+Universal synchronous asynchronous receiver transmitter (USART)
+40.8.10
+Receive data register (USART_RDR)
+Address offset: 0x24
+Reset value: Undefined
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
+Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res.
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+Res. Res. Res. Res. Res. Res. Res. r r r r r r r r
+RDR[8:0]
+r
+Bits 31:9 Reserved, must be kept at reset value.
+Bits 8:0 RDR[8:0]: Receive data value
+Contains the received data character.
+The RDR register provides the parallel interface between the input shift register and the
+internal bus (see Figure 406).
+When receiving with the parity enabled, the value read in the MSB bit is the received parity
+bit.
+40.8.11
+Transmit data register (USART_TDR)
+Address offset: 0x28
+Reset value: Undefined
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
+Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res. Res.
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+Res. Res. Res. Res. Res. Res. Res. rw rw rw rw rw rw rw rw
+TDR[8:0]
+rw
+Bits 31:9 Reserved, must be kept at reset value.
+Bits 8:0 TDR[8:0]: Transmit data value
+Contains the data character to be transmitted.
+The TDR register provides the parallel interface between the internal bus and the output
+shift register (see Figure 406).
+When transmitting with the parity enabled (PCE bit set to 1 in the USART_CR1 register),
+the value written in the MSB (bit 7 or bit 8 depending on the data length) has no effect
+because it is replaced by the parity.
+Note: This register must be written only when TXE=1.
