@@ -57,7 +57,8 @@ import pyperclip
 sectionSeparatorRE = r'^\d+\.\d+\.\d+'
 
 scriptName = 'dsparse'
-scriptVer = 'v1.1'
+scriptVer = 'v1.2'
+printScriptInfo = False
 
 #infilename = "/tmp/cr1b.txt"
 
@@ -98,7 +99,13 @@ def processSection(lines):
     
   registerbase = registerbase.group(1)
   output('/* --- '+registerbase+' values ----------------------------------------------------- */')
-  output('/* --- ('+scriptName+' '+scriptVer+' at '+time.strftime('%c')+') --- */')
+  if printScriptInfo:
+    output('/* --- ('+scriptName+' '+scriptVer+' at '+time.strftime('%c')+') --- */')
+  
+  doxygenGroupId = "{}_values".format(registerbase.lower())
+  doxygenGroupName = "{} values".format(registerbase)
+  output('/** @defgroup {} {}'.format(doxygenGroupId, doxygenGroupName))
+  output('@{*/')
   output()
   
   inSection = False
@@ -107,8 +114,8 @@ def processSection(lines):
     
     if inSection:
       if re.search(sectionSeparatorRE, line) is not None:
-        # Start of next section, so bail
-        return linesDone
+        # Start of next section, bail
+        break
     
     inSection = True
     
@@ -139,10 +146,10 @@ def processSection(lines):
       
       if isRange:
         startLine += '_MASK'
-        comment = '/* '+name+'['+nameBits[0]+':'+nameBits[1]+']: '+description+' */'
+        comment = '/** '+name+'['+nameBits[0]+':'+nameBits[1]+']: '+description+' */'
         endLine = '('+rangeMask+' << '+bit[1]+')'
       else:
-        comment = '/* '+name+': '+description+' */'
+        comment = '/** '+name+': '+description+' */'
         endLine = '(1 << '+bit+')'
         
       if len(startLine) < shortLen:
@@ -164,7 +171,9 @@ def processSection(lines):
         
       output(startLine+tabs+endLine)
       output()
-      
+  
+  # end the doxygen group and bail
+  output('/**@}*/')
   return linesDone
   
 def processSections(lines):
